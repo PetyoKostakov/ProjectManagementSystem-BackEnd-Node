@@ -5,7 +5,14 @@ var express = require('express'),
     dobyParser = require('body-parser'),//bodyParser middle wear get access to post data
     bookRouter = require('./routes/bookRouter');
 
-var db = mongoose.connect('mongodb://localhost/books'); // connects to db and creates collection if fo not exist
+var db;
+if (process.env.ENV === 'Test') {
+    db = mongoose.connect('mongodb://localhost/books_test');
+} else {
+    db = mongoose.connect('mongodb://localhost/books');
+}
+// connects to db and creates collection if fo not exist
+
 
 
 
@@ -23,4 +30,4 @@ app.listen(port, function () {
   console.log('Listening on port', port);
 });
 
-
+module.exports = app;

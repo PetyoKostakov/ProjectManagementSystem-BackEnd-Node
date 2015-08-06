@@ -1,35 +1,17 @@
 var express = require('express'),
     Book = require('../models/bookModel'),
     bookRouter = express.Router(),
-    bookController = require('');
+    bookController = require('../controllers/bookcontroller.js')(Book);
 
 bookRouter.route('/books')
-    .get(function(req, res) {
-        var query = req.query;
-
-        // query param - adding the abbility to filter by query for example http://localhost:8000/api/books?genre=schience
-        // will filter by genre
-        Book.find(query, function (err, books) {
-            if (err) {
-                res.status(500).send(err);
-            } else {
-                res.json(books);
-            }
-        });
-    })
-    .post(function(req, res) {
-        var book = new Book(req.body);
-        book.save();
-
-        console.log(book);
-        res.status(201).send(book);
-    });
+    .get(bookController.get)
+    .post(bookController.post);
 
 bookRouter.use('/books/:bookId', function(req, res, next) { //middle ware
     Book.findById(req.params.bookId, function (err, book) {
         if (err) {
             res.status(500).send(err);
-        } else if(book) {
+        } else if (book) {
             req.book = book;
             next();
         } else {
