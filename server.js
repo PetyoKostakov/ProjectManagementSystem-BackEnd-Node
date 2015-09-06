@@ -2,35 +2,23 @@ var express = require('express'),
     mongoose = require('mongoose'),
     port = process.env.PORT || 3000,
     app = express(),
-    dobyParser = require('body-parser'),//bodyParser middle wear get access to post data
-    bookRouter = require('./routes/bookRouter'),
-    taskRouter = require('./routes/taskRouter');
+    bodyParser = require('body-parser'),//bodyParser middle wear get access to post data
+    taskRouter = require('./routes/taskRouter'),
+    db;
 
-var db;
 if (process.env.ENV === 'Test') {
-    //db = mongoose.connect('mongodb://localhost/books_test');
     db = mongoose.connect('mongodb://localhost/projectManagement-test');
 } else {
-//    db = mongoose.connect('mongodb://localhost/books');
     db = mongoose.connect('mongodb://localhost/projectManagement');
 }
-// connects to db and creates collection if fo not exist
 
+app.use(bodyParser.urlencoded({extended: true }));
+app.use(bodyParser.json()); // parse json
 
-
-
-app.use(dobyParser.urlencoded({extended: true })); //
-app.use(dobyParser.json()); // parse json
-
-
-//app.use('/api', bookRouter);
 app.use('/api', taskRouter);
 
 app.use('/', express.static(__dirname + '/public/app/'));
 app.use('/', express.static(__dirname + '/public/'));
-//app.get('/', function (req, res) {
-//  res.send('Node is restarting');
-//});
 
 app.listen(port, function () {
   console.log('Listening on port', port);
